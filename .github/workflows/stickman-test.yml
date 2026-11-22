@@ -1,9 +1,9 @@
-name: Render 15s Stickman Test
+name: Render Cinematic Stickman V2
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'tests/render_stickman.py'
+      - 'tests/render_stickman_v2.py'
       - '.github/workflows/stickman-test.yml'
 jobs:
   render:
@@ -16,20 +16,19 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install dependencies
+      - name: Install renderer
         run: |
-          python -m pip install --upgrade pip
           python -m pip install pillow
-          sudo apt-get update
+          sudo apt-get update -qq
           sudo apt-get install -y ffmpeg
-      - name: Generate 15s MP4
-        run: python tests/render_stickman.py
-      - name: Validate output
+      - name: Render 15-second cinematic video
+        run: python tests/render_stickman_v2.py
+      - name: Check MP4
         run: |
-          test -s out/stickman-15s-test.mp4
-          ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 out/stickman-15s-test.mp4
-      - name: Upload result
+          test -s out/stickman-cinematic-v2.mp4
+          ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 out/stickman-cinematic-v2.mp4
+      - name: Upload rendered MP4
         uses: actions/upload-artifact@v4
         with:
-          name: stickman-15s-video
-          path: out/stickman-15s-test.mp4
+          name: stickman-cinematic-v2
+          path: out/stickman-cinematic-v2.mp4
